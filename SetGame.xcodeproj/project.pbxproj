@@ -15,6 +15,9 @@
 		FDE95F9825EBD43F001F773C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FDE95F9625EBD43F001F773C /* LaunchScreen.storyboard */; };
 		FDE95FA325EBD43F001F773C /* SetGameTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE95FA225EBD43F001F773C /* SetGameTests.swift */; };
 		FDE95FAE25EBD43F001F773C /* SetGameUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE95FAD25EBD43F001F773C /* SetGameUITests.swift */; };
+		FDE95FBF25EBD46B001F773C /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE95FBE25EBD46B001F773C /* Card.swift */; };
+		FDE95FC425EBD803001F773C /* Deck.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE95FC325EBD803001F773C /* Deck.swift */; };
+		FDE95FC925EBDCA4001F773C /* SetGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE95FC825EBDCA4001F773C /* SetGame.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +52,9 @@
 		FDE95FA925EBD43F001F773C /* SetGameUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SetGameUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FDE95FAD25EBD43F001F773C /* SetGameUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGameUITests.swift; sourceTree = "<group>"; };
 		FDE95FAF25EBD43F001F773C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FDE95FBE25EBD46B001F773C /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
+		FDE95FC325EBD803001F773C /* Deck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Deck.swift; sourceTree = "<group>"; };
+		FDE95FC825EBDCA4001F773C /* SetGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGame.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +112,9 @@
 				FDE95F9425EBD43F001F773C /* Assets.xcassets */,
 				FDE95F9625EBD43F001F773C /* LaunchScreen.storyboard */,
 				FDE95F9925EBD43F001F773C /* Info.plist */,
+				FDE95FBE25EBD46B001F773C /* Card.swift */,
+				FDE95FC325EBD803001F773C /* Deck.swift */,
+				FDE95FC825EBDCA4001F773C /* SetGame.swift */,
 			);
 			path = SetGame;
 			sourceTree = "<group>";
@@ -260,7 +269,10 @@
 			files = (
 				FDE95F9025EBD43E001F773C /* ViewController.swift in Sources */,
 				FDE95F8C25EBD43E001F773C /* AppDelegate.swift in Sources */,
+				FDE95FC425EBD803001F773C /* Deck.swift in Sources */,
 				FDE95F8E25EBD43E001F773C /* SceneDelegate.swift in Sources */,
+				FDE95FC925EBDCA4001F773C /* SetGame.swift in Sources */,
+				FDE95FBF25EBD46B001F773C /* Card.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

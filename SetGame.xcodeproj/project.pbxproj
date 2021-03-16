@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FD9C53EF25F0EB7800AC9677 /* CardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD9C53EE25F0EB7800AC9677 /* CardsView.swift */; };
 		FDE95F8C25EBD43E001F773C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE95F8B25EBD43E001F773C /* AppDelegate.swift */; };
 		FDE95F8E25EBD43E001F773C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE95F8D25EBD43E001F773C /* SceneDelegate.swift */; };
 		FDE95F9025EBD43E001F773C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDE95F8F25EBD43E001F773C /* ViewController.swift */; };
@@ -38,6 +39,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		FD9C53EE25F0EB7800AC9677 /* CardsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardsView.swift; sourceTree = "<group>"; };
 		FDE95F8825EBD43E001F773C /* SetGame.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SetGame.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FDE95F8B25EBD43E001F773C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FDE95F8D25EBD43E001F773C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 				FDE95FBE25EBD46B001F773C /* Card.swift */,
 				FDE95FC325EBD803001F773C /* Deck.swift */,
 				FDE95FC825EBDCA4001F773C /* SetGame.swift */,
+				FD9C53EE25F0EB7800AC9677 /* CardsView.swift */,
 			);
 			path = SetGame;
 			sourceTree = "<group>";
@@ -267,6 +270,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FD9C53EF25F0EB7800AC9677 /* CardsView.swift in Sources */,
 				FDE95F9025EBD43E001F773C /* ViewController.swift in Sources */,
 				FDE95F8C25EBD43E001F773C /* AppDelegate.swift in Sources */,
 				FDE95FC425EBD803001F773C /* Deck.swift in Sources */,

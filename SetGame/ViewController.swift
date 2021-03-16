@@ -9,137 +9,215 @@ import UIKit
 
 class ViewController: UIViewController {
     
-    @IBOutlet private var cardButtons: [UIButton]!
     @IBOutlet private weak var draw3CardsButton: UIButton!
     @IBOutlet private weak var scoreLabel: UILabel!
+    @IBOutlet private weak var cardsView: CardsView! {
+        didSet {
+            let rotation = UIRotationGestureRecognizer(target: self, action: #selector(shuffleCards(_:)))
+            cardsView.addGestureRecognizer(rotation)
+        }
+    }
+    
+    private var game = SetGame()
+    private lazy var cardsForInit = game.playedCards
+    private var viewForCard = Dictionary<UIView, Card>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         newGameInit()
-    }
-    
-    private var game = SetGame()
-    private var buttonForCardFromPlayedCards =  Dictionary<UIButton, Card>()
-    private var amountOfActiveButtons = 12
-    
-    private func newGameInit() {
-        game = SetGame()
-        amountOfActiveButtons = 12
-        buttonForCardFromPlayedCards.removeAll()
-        draw3CardsButton.isHidden = false
-        var cardsForInit = game.playedCards
-        
-        cardButtons.shuffle()
-        for index in cardButtons.indices {
-            let button = cardButtons[index]
-            if index > amountOfActiveButtons - 1 {
-                button.setTitle(nil, for: .normal)
-                button.setAttributedTitle(nil, for: .normal)
-                button.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0)
-            } else {
-                if let randomCard = cardsForInit.randomElement() {
-                    buttonForCardFromPlayedCards[button] = randomCard
-                    button.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
-                    button.setAttributedTitle(setUIForText(ofCard: randomCard), for: .normal)
-                    cardsForInit.remove(randomCard)
-                }
-            }
-        }
+        NotificationCenter.default.addObserver(self, selector: #selector(ViewController.rotated), name: UIDevice.orientationDidChangeNotification, object: nil)
     }
 
-    @IBAction private func tauchOnCardButton(_ sender: UIButton) {
-        game.chooseCard(card: buttonForCardFromPlayedCards[sender] ?? game.emptyCard)
+    private func newGameInit() {
+        game = SetGame()
+        
+        viewForCard.removeAll()
+        cardsForInit = game.playedCards
+        for view in cardsView.subviews {
+            view.removeFromSuperview()
+        }
+        viewForCard = viewForCardInit()
+        updateUI()
+
+        draw3CardsButton.isHidden = false
+    }
+    
+    private func viewForCardInit() -> Dictionary<UIView, Card> {
+        
+        let cardsPerRow = makeArrayWithNumberOfCardsPerRow()
+        var arrayOfRect = getArrayOfRect(byArrayOfNumbers: cardsPerRow)
+        
+        for _ in game.playedCards {
+            if let card = cardsForInit.popFirst() {
+                
+                let rect = arrayOfRect.removeFirst()
+                let view = UIView(frame: rect)
+                
+                let tap = UITapGestureRecognizer(target: self, action: #selector(tapOnCard(_:)))
+                view.addGestureRecognizer(tap)
+                
+                cardsView.addSubview(view)
+                viewForCard[view] = card
+            }
+        }
+        return viewForCard
+    }
+    
+    private func updateViewForCard() -> Dictionary<UIView, Card> {
+                
+        let cardsPerRow = makeArrayWithNumberOfCardsPerRow()
+        if !cardsPerRow.isEmpty {
+            var arrayOfRect = getArrayOfRect(byArrayOfNumbers: cardsPerRow)
+            
+            for item in viewForCard {
+                if let newRect = arrayOfRect.first {
+
+                    item.key.frame = newRect
+                    if item.key.gestureRecognizers == nil {
+                        let tap = UITapGestureRecognizer(target: self, action: #selector(tapOnCard(_:)))
+                        item.key.addGestureRecognizer(tap)
+                    }
+                    arrayOfRect.removeFirst()
+                }
+            }
+        } else {
+            viewForCard.removeAll()
+        }
+        return viewForCard
+    }
+    
+    private func getArrayOfRect(byArrayOfNumbers array: [Int]) -> [CGRect] {
+        
+        var arrayOfRect = [CGRect]()
+        
+        let width = Int(cardsView.bounds.width) / array[0]
+        let height = Int(cardsView.bounds.height) / array.count
+        
+        for columnIndex in 1...array.count {
+            for rowIndex in 1...array[0] {
+                let x = rowIndex * width - width
+                let y = columnIndex * height - height
+                let cardRect = CGRect(x: x.offsetX, y: y.offsetY, width: width.offsetWidth, height: height.offsetHeight)
+                arrayOfRect.append(cardRect)
+            }
+        }
+        return arrayOfRect
+    }
+    
+    @objc private func tapOnCard(_ sender: UITapGestureRecognizer) {
+        if let currentView = sender.view,  let card = viewForCard[currentView] {
+            game.chooseCard(card: card)
+            updateUI()
+        }
+    }
+    
+    @objc private func shuffleCards(_ sender: UIRotationGestureRecognizer) {
+        if sender.state == UIGestureRecognizer.State.ended {
+            var cards = viewForCard.values.shuffled()
+            for (view, _) in viewForCard {
+                viewForCard[view] = cards.removeFirst()
+            }
+            updateUI()
+        }
+    }
+    
+    @objc private func rotated() {
         updateUI()
     }
     
-    @IBAction private func tauchOnNewGameButton(_ sender: UIButton) {
+    private func makeArrayWithNumberOfCardsPerRow() -> [Int] {
+        
+        let amount = UInt(game.playedCards.count)
+        var array = [Int]()
+        
+        switch amount {
+        case 0...12 : array = makeArrayOfRows(withNumbers: 3, fromAmount: amount)
+        case 13...28 : array = makeArrayOfRows(withNumbers: 4, fromAmount: amount)
+        case 29...40 : array = makeArrayOfRows(withNumbers: 5, fromAmount: amount)
+        case 41...54 : array = makeArrayOfRows(withNumbers: 6, fromAmount: amount)
+        case 55...70 : array = makeArrayOfRows(withNumbers: 7, fromAmount: amount)
+        case 71...81 : array = makeArrayOfRows(withNumbers: 8, fromAmount: amount)
+        default:  break
+        }
+        return array
+    }
+    
+    private func makeArrayOfRows(withNumbers number: UInt, fromAmount amount: UInt) -> [Int] {
+        var array = [Int]()
+        var sum = amount
+        while sum > number {
+            array.append(Int(number))
+            sum -= number
+        }
+        if sum > 0 {
+            array.append(Int(sum))
+        }
+        return array
+    }
+
+    @IBAction private func touchOnNewGameButton(_ sender: UIButton) {
         newGameInit()
         updateUI()
     }
     
-    @IBAction private func tauchOnDraw3CardsButton(_ sender: UIButton) {
-        var newCards = game.drawThreeCards()
-        for _ in 1...3 {
-            let button = cardButtons[amountOfActiveButtons]
-            buttonForCardFromPlayedCards[button] = newCards.popFirst()!
-            button.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
-            amountOfActiveButtons += 1
+    @IBAction private func touchOnDraw3CardsButton(_ sender: UIButton) {
+        let newCards = game.drawThreeCards()
+        for card in newCards {
+            let newView = UIView()
+            cardsView.addSubview(newView)
+            viewForCard[newView] = card
         }
         game.score -= 5
+        viewForCard = updateViewForCard()
         updateUI()
     }
     
     private func updateUI() {
+    
         let score = game.score
         scoreLabel.text = "Score: \(score)"
-        
-        if amountOfActiveButtons == 24 {
+
+        if game.deck.allCards.isEmpty {
             draw3CardsButton.isHidden = true
         }
-        
+
         if !game.changedCards.isEmpty {
-            for (button, card) in buttonForCardFromPlayedCards {
+            for (view, card) in viewForCard {
                 if game.changedCards.keys.contains(card) {
-                    buttonForCardFromPlayedCards[button] = game.changedCards[card]
+                    viewForCard[view] = game.changedCards[card]
                     game.changedCards.removeValue(forKey: card)
                 }
             }
         }
         
-        for (button, card) in buttonForCardFromPlayedCards {
-            if game.choosenCards.contains(card) {
-                button.layer.borderWidth = 3
-                button.layer.borderColor = #colorLiteral(red: 0.2196078449, green: 0.007843137719, blue: 0.8549019694, alpha: 1)
-                button.layer.cornerRadius = 10
-            } else {
-                button.layer.borderWidth = 0
-                button.layer.borderColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0)
-                button.layer.cornerRadius = 0
-            }
-            button.setAttributedTitle(setUIForText(ofCard: card), for: .normal)
-        }
-        
         if !game.deletedCards.isEmpty {
-            for (button, card) in buttonForCardFromPlayedCards {
-                if game.deletedCards.contains(card) {
-                    button.setTitle(nil, for: .normal)
-                    button.setAttributedTitle(nil, for: .normal)
-                    button.backgroundColor = #colorLiteral(red: 1, green: 1, blue: 1, alpha: 0)
+            let dictForDeleting = viewForCard
+            for item in dictForDeleting {
+                if game.deletedCards.contains(item.value) {
+                    viewForCard.removeValue(forKey: item.key)
+                    item.key.removeFromSuperview()
+
                 }
             }
         }
+        cardsView.viewForCard = updateViewForCard()
+        cardsView.choosenCards = game.choosenCards
     }
-    
-    private func setUIForText(ofCard card: Card) -> NSAttributedString {
-        
-        var text = card.picture.rawValue
-        text.multiply(onNumber: card.parameters["numberOfPictures"]!)
-        
-        var attributes = [NSAttributedString.Key: Any]()
-        
-        let color: UIColor
-        if card.parameters["color"] == 1 {
-            color = #colorLiteral(red: 0.9254902005, green: 0.2352941185, blue: 0.1019607857, alpha: 1)
-        } else if card.parameters["color"] == 2 {
-            color = #colorLiteral(red: 0.9529411793, green: 0.6862745285, blue: 0.1333333403, alpha: 1)
-        } else {
-            color = #colorLiteral(red: 0.3411764801, green: 0.6235294342, blue: 0.1686274558, alpha: 1)
-        }
-        
-        if card.parameters["texture"] == 1 {
-            attributes[NSAttributedString.Key.strokeWidth] = -1
-            attributes[NSAttributedString.Key.foregroundColor] = color
-        } else if card.parameters["texture"] == 2 {
-            attributes[NSAttributedString.Key.foregroundColor] = color.withAlphaComponent(0.3)
-        } else {
-            attributes[NSAttributedString.Key.strokeWidth] = 5
-            attributes[NSAttributedString.Key.foregroundColor] = color
-        }
-        
-        let UIString = NSMutableAttributedString(string: text, attributes: attributes)
-        return UIString
+}
+
+extension Int {
+    var offsetX: Int {
+        return self + 3
     }
-    
+    var offsetY: Int {
+        return self + 3
+    }
+    var offsetWidth: Int {
+        return self - 6
+    }
+    var offsetHeight: Int {
+        return self - 6
+    }
 }
 
 extension String {

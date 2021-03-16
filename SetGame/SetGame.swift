@@ -12,7 +12,7 @@ struct SetGame {
     let emptyCard = Card(picture: Card.Picture.circle, parameters: ["numberOfCards": 0, "color": 0, "texture": 0], id: 0)
     
     private(set) var deck = Deck()
-    private(set) var playedCards = Set<Card>()
+    var playedCards = Set<Card>()
     private(set) var choosenCards = Set<Card>()
     var changedCards = Dictionary<Card, Card>()
     private(set) var deletedCards = Set<Card>()
@@ -47,6 +47,8 @@ struct SetGame {
             } else if card.parameters["texture"] != firstChoosenCard.parameters["texture"], card.parameters["texture"] != secondChoosenCard.parameters["texture"], firstChoosenCard.parameters["texture"] != secondChoosenCard.parameters["texture"] {
                 listForMatching.append(true)
             }
+            
+            listForMatching = [true, true, true, true]
             
             if listForMatching.count == 4 {
                 score += 5
